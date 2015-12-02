@@ -1,5 +1,5 @@
 //
-//  ViewController.h
+//  ScrollViewController.h
 //  NavgationViewControolerDemo
 //
 //  Created by miaogaoliang on 15/11/18.
@@ -8,8 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-@interface ViewController : UIViewController
-
+@interface ScrollViewController : UIViewController<UIGestureRecognizerDelegate>
+@property (weak, nonatomic) IBOutlet UIScrollView *scroll;
 
 @end
-
