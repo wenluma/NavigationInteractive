@@ -14,11 +14,8 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    
-//    self.navigationController.interactivePopGestureRecognizer.delegate = self;
     self.view.backgroundColor = [UIColor redColor];
     [self initNavigaionItem];
-//    [(CustomNavigationController *)self.navigationController interactivePopGesture].delegate = self;
 }
 - (void)initNavigaionItem {
     self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"back" style:UIBarButtonItemStylePlain target:self action:@selector(pop)];
@@ -27,23 +24,9 @@
 - (void)pop {
     [self.navigationController popToRootViewControllerAnimated:YES];
 }
-- (void)viewWillDisappear:(BOOL)animated {
-    [super viewWillDisappear:animated];
-//    self.navigationController.interactivePopGestureRecognizer.delegate = nil;
-}
+
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
 }
-//- (void)handlePan:(UIPanGestureRecognizer *)pan {
-//
-//}
-
-//- (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer {
-//    return YES;
-//}
-//
-//- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer {
-//    return YES;
-//}
 
 @end
