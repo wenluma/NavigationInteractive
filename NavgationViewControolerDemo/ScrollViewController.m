@@ -7,7 +7,6 @@
 //
 
 #import "ScrollViewController.h"
-#import "UIScrollView+touchEvent.h"
 
 
 @implementation ScrollViewController
