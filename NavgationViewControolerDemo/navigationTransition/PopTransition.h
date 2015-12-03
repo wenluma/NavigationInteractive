@@ -7,15 +7,14 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "TransitionMacroHeader.h"
 
-
-@interface PopTransition : NSObject <UIViewControllerAnimatedTransitioning>
+@interface PopTransition : NSObject <TransitionProtocol>
 @property (weak, nonatomic) id<UIViewControllerContextTransitioning> transitionContext;
 @property (weak, nonatomic) UIView *fromNavigationBar;
 @property (weak, nonatomic) UIView *toNavigaionBar;
 
 @property (assign, nonatomic) BOOL interactive;
-
-- (void)finishOrCancelledTransition;
+@property (assign, nonatomic) NavigationBarState navigationBarState;
 
 @end

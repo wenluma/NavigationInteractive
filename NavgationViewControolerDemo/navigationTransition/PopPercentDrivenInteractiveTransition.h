@@ -7,8 +7,9 @@
 //
 
 #import <UIKit/UIKit.h>
-
+#import "TransitionMacroHeader.h"
 @interface PopPercentDrivenInteractiveTransition : UIPercentDrivenInteractiveTransition
 @property (weak, nonatomic) UIView *fromNavigationBar, *toNavigationBar;
 @property (assign, nonatomic, getter=isInteractive) BOOL interactive;
+@property (weak, nonatomic) id<TransitionProtocol> transtion;
 @end

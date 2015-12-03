@@ -7,7 +7,6 @@
 //
 
 #import "PopPercentDrivenInteractiveTransition.h"
-#import "TransitionMacroHeader.h"
 
 @interface PopPercentDrivenInteractiveTransition ()
 @property (weak, nonatomic) id<UIViewControllerContextTransitioning> contextData;
@@ -22,7 +21,6 @@
 - (void)startInteractiveTransition:(id<UIViewControllerContextTransitioning>)transitionContext {
     // Always call super first.
     [super startInteractiveTransition:transitionContext];
-    _interactive = YES;
     // Save the transition context for future reference.
     self.contextData = transitionContext;
 
@@ -37,7 +35,9 @@
 
 - (void)updateToViewController:(CGFloat)percentComplete {
     _toView.frame = CGRectOffset(_toInitFrame, _toOffsetX * percentComplete, 0);
-    _toNavigationBar.frame = CGRectOffset(_toNavigationFrame, _toOffsetX * percentComplete, 0);
+    if ( [_transtion navigationBarState] == NavigationBarStateWaiting ) {
+        _toNavigationBar.frame = CGRectOffset(_toNavigationFrame, _toOffsetX * percentComplete, 0);
+    }
 }
 
 - (void)updateFromViewController:(CGFloat)percentComplete {
@@ -55,11 +55,13 @@
     
     _toOffsetX = ABS(CGRectGetMinX(_toInitFrame));
 
-    _toNavigationBar = [_toViewController.navigationController.view viewWithTag:toTagKey];
-    CGRect navFrame = _toNavigationBar.frame;
-    navFrame.origin.x = -_toOffsetX;
-    _toNavigationFrame = navFrame;
-    _toNavigationBar.frame = _toNavigationFrame;
+    if ([_transtion navigationBarState] == NavigationBarStateWaiting) {
+        _toNavigationBar = [_toViewController.navigationController.view viewWithTag:toTagKey];
+        CGRect navFrame = _toNavigationBar.frame;
+        navFrame.origin.x = -_toOffsetX;
+        _toNavigationFrame = navFrame;
+        _toNavigationBar.frame = _toNavigationFrame;
+    }
 }
 
 - (void)setupForFromSource:(id<UIViewControllerContextTransitioning>)transitionContext {
@@ -77,5 +79,4 @@
     _fromNavigationFrame = navFrame;
     _fromNavigationBar.frame = _fromNavigationFrame;
 }
-
 @end

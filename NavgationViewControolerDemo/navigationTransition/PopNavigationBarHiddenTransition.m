@@ -1,39 +1,43 @@
 //
-//  PopTransition.m
-//  NavgationViewControolerDemo
+//  PopNavigationBarHiddenTransition.m
+//  MojiWeather
 //
-//  Created by miaogaoliang on 15/11/27.
-//  Copyright © 2015年 miaogaoliang. All rights reserved.
+//  Created by miaogaoliang on 15/12/2.
+//  Copyright © 2015年 Moji Fengyun Software & Technology Development co., Ltd. All rights reserved.
 //
 
-#import "PopTransition.h"
+#import "PopNavigationBarHiddenTransition.h"
 #import "TransitionMacroHeader.h"
 
-@interface PopTransition ()
+@interface PopNavigationBarHiddenTransition ()
 @property (weak, nonatomic) UIViewController *fromViewController, *toViewController;
 @property (weak, nonatomic) UIView *fromView, *toView;
 @property (assign, nonatomic) CGRect fromInitFrame, toInitFrame;
 @property (assign, nonatomic) CGRect fromFinalFrame, toFinalFrame;
 @property (assign, nonatomic) CGFloat fromOffsetX, toOffsetX;
 @end
+@implementation PopNavigationBarHiddenTransition
 
-@implementation PopTransition
+- (NavigationBarState)navigationBarState {
+    return NavigationBarStateMoving;
+}
+
 - (NSTimeInterval)transitionDuration:(nullable id <UIViewControllerContextTransitioning>)transitionContext {
     return 0.3;
 }
+
 // This method can only  be a nop if the transition is interactive and not a percentDriven interactive transition.
 - (void)animateTransition:(id <UIViewControllerContextTransitioning>)transitionContext {
     self.transitionContext = transitionContext;
     _interactive = [transitionContext isInteractive];
-    
     [self setupToView:transitionContext];
     [self setupFromView:transitionContext];
-
+    
     if ( _interactive ) {
-        [_toViewController.navigationController.view addSubview:_toNavigaionBar];
-        [_fromViewController.navigationController.view addSubview:_fromNavigationBar];
-        
-        _toNavigaionBar.tag = toTagKey;
+//        [_toViewController.navigationController.view addSubview:_toNavigaionBar];
+//        [_fromViewController.navigationController.view addSubview:_fromNavigationBar];
+        _fromNavigationBar = _fromViewController.navigationController.navigationBar;
+//        _toNavigaionBar.tag = toTagKey;
         _fromNavigationBar.tag = fromTagKey;
         
     } else {
@@ -49,7 +53,7 @@
             // Clean up
             [weakContext completeTransition:!weakContext.transitionWasCancelled];
         }];
-    
+        
     }
 }
 
@@ -85,7 +89,7 @@
         UIView * __weak weakToView = toViewController.view;
         UIView * __weak weakFromView = fromViewController.view;
         NSTimeInterval duration = [self transitionDuration:self.transitionContext];
-        CGRect fromFinalRect = [[UIScreen mainScreen] bounds];
+        CGRect fromFinalRect = _fromFinalFrame;
         
         CGFloat offsetX = CGRectGetWidth(fromFinalRect) * transitionScale;
         CGRect toFinalRect = CGRectOffset(fromFinalRect, -offsetX, 0);
@@ -93,8 +97,8 @@
         navBarFrame.origin.x = 0;
         
         [UIView animateWithDuration:duration * transitionScale animations:^{
-            weakToView.frame = toFinalRect;
-            weakFromView.frame = fromFinalRect;
+            weakToView.frame = weakSelf.toFinalFrame;
+            weakFromView.frame = weakSelf.fromInitFrame;
             weakSelf.fromNavigationBar.frame = navBarFrame;
             weakSelf.toNavigaionBar.frame = navBarFrame;
         } completion:^(BOOL finished) {
@@ -103,7 +107,7 @@
     }
 }
 - (void)destory {
-    [_fromNavigationBar removeFromSuperview];
+    _fromNavigationBar.tag = 0;
     if ( !self.transitionContext.transitionWasCancelled ) {
         [_toNavigaionBar performSelector:@selector(removeFromSuperview) withObject:nil afterDelay:0.1];
     }else {
@@ -111,7 +115,7 @@
     }
     [self.transitionContext completeTransition:!self.transitionContext.transitionWasCancelled];
     _interactive = NO;
-
+    
 }
 - (void)finishOrCancelledTransition{
     [self overTransition];
@@ -122,11 +126,16 @@
     UIView *containerView = [transitionContext containerView];
     [containerView addSubview:toViewController.view];
     _toView = toViewController.view;
+    CGRect frame = _toView.frame;
+    frame.origin.x = 0;
+    _toView.frame = frame;
     _toFinalFrame = _toView.frame;
+
     
     CGFloat offsetX = -CGRectGetWidth(_toView.frame) * transitionScale;
     CGRect toInitRect = CGRectOffset(_toView.frame, offsetX, 0);
     _toView.frame = toInitRect;
+    _toInitFrame = toInitRect;
 }
 
 - (void)setupFromView:(id<UIViewControllerContextTransitioning>)transitionContext {
@@ -135,7 +144,7 @@
     UIView *containerView = [transitionContext containerView];
     [containerView addSubview:fromViewController.view];
     _fromView = fromViewController.view;
-    
+    _fromInitFrame = _fromView.frame;
     _fromFinalFrame = CGRectOffset(_fromView.frame, CGRectGetWidth(_fromView.frame), 0);
 }
 @end
